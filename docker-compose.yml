@@ -23,19 +23,6 @@ services:
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
 
-  db_staging:
-    image: postgres:latest
-    container_name: next_app_staging_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: next_app_staging
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_staging_data:/var/lib/postgresql/data
-
 volumes:
   postgres_dev_data:
   postgres_test_data:
-  postgres_staging_data:

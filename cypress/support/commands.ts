@@ -35,3 +35,13 @@
 //     }
 //   }
 // }
+
+declare namespace Cypress {
+  interface Chainable {
+    resetDatabase(): Chainable<void>;
+  }
+}
+
+Cypress.Commands.add("resetDatabase", () => {
+  cy.task("resetDatabase");
+});

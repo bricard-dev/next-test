@@ -6,24 +6,35 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "studio:test": "dotenv -e .env.test -- prisma studio",
+    "prisma:test": "npx prisma generate && dotenv -e .env.test -- prisma migrate deploy",
+    "cypress:open": "dotenv -e .env.test -- cypress open --e2e",
+    "cypress:run": "dotenv -e .env.test -- cypress run --e2e",
+    "e2e": "npm run prisma:test && NODE_ENV=test next build && start-server-and-test 'NODE_ENV=test next start' http://localhost:3000 \"cypress open --e2e\"",
+    "e2e:headless": "npm run prisma:test && NODE_ENV=test next build && start-server-and-test 'NODE_ENV=test next start' http://localhost:3000 \"cypress run --e2e\""
   },
   "dependencies": {
+    "@next/env": "^15.2.2",
     "next": "15.2.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@prisma/client": "^6.4.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@prisma/client": "^6.4.1",
     "@tailwindcss/postcss": "^4",
+    "@types/dotenv": "^6.1.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "cypress": "^14.1.0",
+    "dotenv": "^16.4.7",
+    "dotenv-cli": "^7.4.1",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
     "prisma": "^6.4.1",
+    "start-server-and-test": "^2.0.10",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

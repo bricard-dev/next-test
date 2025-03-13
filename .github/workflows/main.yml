@@ -17,7 +17,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: next_app_test
         ports:
-          - 5433:5432
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -42,25 +42,9 @@ jobs:
       - name: Run migrations
         run: npx prisma migrate deploy
         env:
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5433/next_app_test?schema=public"
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/next_app_test?schema=public"
 
       - name: Run tests
-        run: npm test
+        run: npm run e2e:headless
         env:
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5433/next_app_test?schema=public"
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "--prod"
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/next_app_test?schema=public"
