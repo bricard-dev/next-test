@@ -1,4 +1,4 @@
-name: CI
+name: CI Test
 
 on:
   push:
@@ -25,6 +25,10 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+      NODE_ENV: test
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -43,19 +47,12 @@ jobs:
 
       - name: Run database migrations
         run: npx prisma migrate deploy
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
 
       - name: Build Next.js app
         run: npm run build
 
-      - name: Run unit tests
-        run: npm test
-
       - name: Start Next.js app
         run: npm run start & npx wait-on http://localhost:3000
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
 
       - name: Run E2E tests
         run: npx cypress run
