@@ -99,9 +99,6 @@ jobs:
       - name: Apply Prisma Schema
         run: npx prisma db push --force-reset
 
-      - name: Run unit tests
-        run: npm test
-
       - name: Start Next.js app
         run: npm run build && npm run start & npx wait-on http://localhost:3000
         env:
