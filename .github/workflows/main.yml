@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
+          POSTGRES_DB: db_test
         ports:
           - 5432:5432
         options: >-
@@ -27,7 +27,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db?schema=public
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/db_test?schema=public
       NODE_ENV: test
 
     steps:
@@ -67,7 +67,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
+          POSTGRES_DB: db_test
         ports:
           - 5432:5432
         options: >-
@@ -77,7 +77,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db?schema=public
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/db_test?schema=public
       NODE_ENV: test
 
     steps:
