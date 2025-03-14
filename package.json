@@ -11,8 +11,8 @@
     "prisma:test": "npx prisma generate && dotenv -e .env.test -- prisma migrate deploy",
     "cypress:open": "dotenv -e .env.test -- cypress open --e2e",
     "cypress:run": "dotenv -e .env.test -- cypress run --e2e",
-    "e2e": "NODE_ENV=test next build && npm run prisma:test && start-server-and-test 'NODE_ENV=test next start' http://localhost:3000 \"cypress open --e2e\"",
-    "e2e:headless": "NODE_ENV=test next build && start-server-and-test 'NODE_ENV=test next start' http://localhost:3000 \"cypress run --e2e\""
+    "e2e": "npm run prisma:test && NODE_ENV=test next build && start-server-and-test 'NODE_ENV=test next start' http://localhost:3000 \"cypress open --e2e\"",
+    "e2e:headless": "npm run prisma:test &&NODE_ENV=test next build && start-server-and-test 'NODE_ENV=test next start' http://localhost:3000 \"cypress run --e2e\""
   },
   "dependencies": {
     "@next/env": "^15.2.2",
