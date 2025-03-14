@@ -26,7 +26,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/db_test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/db_test?schema=public
       NODE_ENV: test
 
     steps:

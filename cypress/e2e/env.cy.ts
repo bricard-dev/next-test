@@ -1,11 +1,8 @@
 describe("Environment Test", () => {
-  it("should have correct test environment variables", () => {
-    // Vérifie la variable DATABASE_URL
-    expect(Cypress.env("DATABASE_URL")).to.equal(
-      "postgresql://postgres:postgres@localhost:5433/test_db?schema=public"
-    );
-
-    // Vérifie NODE_ENV
+  it("should have correct NODE_ENV and DATABASE_URL variables", () => {
     expect(Cypress.env("NODE_ENV")).to.equal("test");
+    expect(Cypress.env("DATABASE_URL")).to.equal(
+      "postgresql://postgres:postgres@localhost:5432/db_test?schema=public"
+    );
   });
 });
