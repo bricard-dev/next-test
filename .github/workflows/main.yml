@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI
 
 on:
   push:
@@ -7,15 +7,17 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  build:
+    name: Build and verify
     runs-on: ubuntu-latest
+
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:14
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: next_app_test
+          POSTGRES_DB: test_db
         ports:
           - 5432:5432
         options: >-
@@ -25,22 +27,89 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/next_app_test?schema=public"
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db?schema=public
+      NODE_ENV: test
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: "18"
           cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run migrations
-        run: npm run prisma:test
+      - name: Generate Prisma Client
+        run: npx prisma generate
 
-      - name: Run tests
-        run: npm run e2e:headless
+      - name: Apply Prisma Schema
+        run: npx prisma db push --force-reset
+
+      - name: Build Next.js app
+        run: npm run build
+        env:
+          SKIP_ENV_VALIDATION: true
+          NEXTAUTH_SECRET: "dummy-secret-for-testing"
+          NEXTAUTH_URL: http://localhost:3000
+
+  test:
+    name: Run tests
+    needs: build
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+      NODE_ENV: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Apply Prisma Schema
+        run: npx prisma db push --force-reset
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Start Next.js app
+        run: npm run build && npm run start & npx wait-on http://localhost:3000
+        env:
+          SKIP_ENV_VALIDATION: true
+          NEXTAUTH_SECRET: "dummy-secret-for-testing"
+          NEXTAUTH_URL: http://localhost:3000
+
+      - name: Run E2E tests
+        run: npx cypress run
+        env:
+          CYPRESS_baseUrl: http://localhost:3000
