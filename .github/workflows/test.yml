@@ -45,11 +45,16 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate
 
-      - name: Run database migrations
-        run: npx prisma migrate deploy
+      # Push the Prisma schema to the database
+      - name: Apply Prisma Schema
+        run: npx prisma db push --force-reset
 
       - name: Build Next.js app
         run: npm run build
+        env:
+          SKIP_ENV_VALIDATION: true
+          NEXTAUTH_SECRET: "dummy-secret-for-testing"
+          NEXTAUTH_URL: http://localhost:3000
 
       - name: Start Next.js app
         run: npm run start & npx wait-on http://localhost:3000
